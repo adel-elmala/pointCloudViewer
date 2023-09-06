@@ -1,0 +1,6 @@
+build/
+xcode/
+opengl-boilerplate/external/assimp/
+*.zip
+.vs
+.vscode
