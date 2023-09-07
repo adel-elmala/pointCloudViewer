@@ -42,7 +42,8 @@ find_package(assimp CONFIG REQUIRED)
 
 
 set(APP_NAME "pointCloudViewer")
-add_executable(${APP_NAME} "SimpleDrawShaderMgr.cpp" "src/parser.cpp" "src/GlShaderMgr.cpp")
+#add_executable(${APP_NAME} "SimpleDrawShaderMgr.cpp" "src/parser.cpp" "src/GlShaderMgr.cpp")
+add_executable(${APP_NAME} "main.cpp" "src/parser.cpp" "src/GlShaderMgr.cpp" "src/camera.cpp" "src/renderer.cpp" "src/windowMgr.cpp")
 
 
 target_link_libraries(${APP_NAME} glfw ${GLFW_LIBRARIES} glew)
