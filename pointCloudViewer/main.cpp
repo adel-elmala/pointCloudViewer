@@ -6,7 +6,7 @@
 #include "windowMgr.h"
 #include "renderer.h"
 #include "camera.h"
-
+#include "gui.h"
 
 
 int main(int argc, char const *argv[])
@@ -18,15 +18,16 @@ int main(int argc, char const *argv[])
 
     camera cam(cameraPos, cameraFront, cameraUp);
 
-    WindowMgr win("Point Cloud Viewer",800,800);
+    WindowMgr win("Point Cloud Viewer", 800, 800);
 
     win.attach_camera(&cam);
-
-    renderer rndr("C:\\Users\\a.refaat\\projects\\pointCloudViewer\\assets\\dragon.ply", "C:\\Users\\a.refaat\\projects\\pointCloudViewer\\opengl-boilerplate\\SimpleDraw.glsl");
+    std::string model_path = "C:\\Users\\a.refaat\\projects\\pointCloudViewer\\assets\\fragment.ply";
+    std::string shader_path =  "C:\\Users\\a.refaat\\projects\\pointCloudViewer\\pointCloudViewer\\SimpleDraw.glsl";
+    renderer rndr(model_path,shader_path);
     rndr.setup();
     glm::mat4 projection = glm::perspective(float(glm::radians(cam.m_fov)), (float)win.m_win_width / (float)win.m_win_height, 0.1f, 1000.0f);
-	glm::mat4 view = cam.m_view; 
-	glm::mat4 model = glm::mat4(1.0f);
+    glm::mat4 view = cam.m_view;
+    glm::mat4 model = glm::mat4(1.0f);
 
     rndr.useProgram();
 
@@ -36,46 +37,44 @@ int main(int argc, char const *argv[])
 
     int frameCounter = 0;
     double previousTime = glfwGetTime();
+
+    gui dearGui((void*)win.m_win);
+
+    dearGui.setup();
+
     while (!win.should_close())
     {
 
         double currentTime = glfwGetTime();
-		frameCounter++;
-		if(frameCounter >= 50)
-		{
-			frameCounter = 0;
-			win.m_deltaTime = currentTime - previousTime;
-            win.setTitle((std::string("FPS: ") + std::to_string(1.0/(win.m_deltaTime))).c_str());
-		}
+        frameCounter++;
+        if (frameCounter >= 50)
+        {
+            frameCounter = 0;
+            win.m_deltaTime = currentTime - previousTime;
+            win.setTitle((std::string("FPS: ") + std::to_string(1.0 / (win.m_deltaTime))).c_str());
+        }
         previousTime = currentTime;
 
-		if(win.m_win_resized)
-		{
-			win.m_win_resized = false;
-			projection = glm::perspective(float(glm::radians(cam.m_fov)), (float)win.m_win_width / (float)win.m_win_height, 0.1f, 1000.0f);
-            rndr.setUniformMat4("proj",projection);
-		}
+        if (win.m_win_resized)
+        {
+            win.m_win_resized = false;
+            projection = glm::perspective(float(glm::radians(cam.m_fov)), (float)win.m_win_width / (float)win.m_win_height, 0.1f, 1000.0f);
+            rndr.setUniformMat4("proj", projection);
+        }
         cam.update();
         view = cam.m_view;
-		glUniformMatrix4fv(glGetUniformLocation(rndr.shaderProgram,"view"),1,GL_FALSE,&view[0][0]);
-
+        rndr.setUniformMat4("view",view);
 
         rndr.render();
-        glfwSwapBuffers(win.m_win);		// Displays what was just rendered (using double buffering).
-		
-		// Poll events (key presses, mouse events)
-		// glfwWaitEvents();					// Use this if no animation.
-		// glfwWaitEventsTimeout(1.0/60.0);	// Use this to animate at 60 frames/sec (timing is NOT reliable)
-		glfwPollEvents();				// Use this version when animating as fast as possible
-    }
+        dearGui.confg();
+        dearGui.render();
+        glfwSwapBuffers(win.m_win); // Displays what was just rendered (using double buffering).
 
+        // Poll events (key presses, mouse events)
+        // glfwWaitEvents();					// Use this if no animation.
+        // glfwWaitEventsTimeout(1.0/60.0);	// Use this to animate at 60 frames/sec (timing is NOT reliable)
+        glfwPollEvents(); // Use this version when animating as fast as possible
+    }
 
     return 0;
 }
-
-
-
-
-
-
-

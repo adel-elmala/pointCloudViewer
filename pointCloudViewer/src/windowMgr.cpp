@@ -4,7 +4,7 @@
 unsigned int WindowMgr::m_win_height = 0;
 unsigned int WindowMgr::m_win_width = 0;
 bool WindowMgr::m_win_resized = false;
-float WindowMgr::m_deltaTime = 0;
+double WindowMgr::m_deltaTime = 0;
 bool WindowMgr::m_rightMouseClicked = false;
 camera* WindowMgr::m_camera = nullptr;
 
@@ -31,9 +31,9 @@ WindowMgr::WindowMgr(const std::string& win_title , unsigned int win_width, unsi
 	glfwInit();
 #if defined(__APPLE__) || defined(__linux__)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	// glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 	m_win = glfwCreateWindow(m_win_width, m_win_height, m_win_title.c_str(), NULL, NULL);
 	if (m_win == NULL) {

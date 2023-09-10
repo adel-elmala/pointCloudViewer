@@ -20,9 +20,7 @@
 //   B. Compiling and linking shader programs
 //
 
-#define GLEW_STATIC
-#include <GL/glew.h> 
-#include <GLFW/glfw3.h> 
+
 
 #include "GlShaderMgr.h"
 
@@ -339,7 +337,6 @@ unsigned int GlShaderMgr::LinkShaderProgram(int numShaders, const unsigned int s
         glAttachShader(shaderProgram, shaderList[i]);
     }
     glLinkProgram(shaderProgram);
-
     int ok = check_link_status(shaderProgram);
     if (ok == 0) {
         return 0;               // Link error occured.

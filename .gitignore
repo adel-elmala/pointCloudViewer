@@ -1,6 +1,7 @@
 build/
 xcode/
-opengl-boilerplate/external/assimp/
+pointCloudViewer/external/
 *.zip
 .vs
 .vscode
+*.ply

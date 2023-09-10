@@ -23,7 +23,7 @@
 #ifndef GL_SHADER_MGR_H
 #define GL_SHADER_MGR_H
 
-#define GLEW_STATIC
+
 #include <GL/glew.h> 
 #include <GLFW/glfw3.h> 
 

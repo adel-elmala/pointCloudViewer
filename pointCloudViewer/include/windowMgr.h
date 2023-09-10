@@ -6,6 +6,7 @@
 #define GLEW_STATIC
 #include <GL/glew.h> 
 #include <GLFW/glfw3.h>
+
 #include "camera.h"
 class WindowMgr
 {
@@ -36,7 +37,7 @@ class WindowMgr
         static unsigned int m_win_height;
         static unsigned int m_win_width;
         static bool m_win_resized;
-        static float m_deltaTime;
+        static double m_deltaTime;
         static bool m_rightMouseClicked;
         static camera* m_camera;
 

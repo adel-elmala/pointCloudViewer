@@ -1,50 +1,47 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0.0)
 
 project ("PointCloudViewer")
 
-set(GLFW_SOURCE_DIR "external/glfw")
-set(GLM_SOURCE_DIR "external/glm")
-set(GLEW_SOURCE_DIR "external/glew-2.1.0")
+
+include_directories(./include)
 
 
-# Building only the GLFW lib
-set(BUILD_SHARED_LIBS OFF CACHE BOOL "")
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "")
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "")
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "")
-set(GLFW_INSTALL OFF CACHE BOOL "")
-
-add_subdirectory(${GLFW_SOURCE_DIR} ${GLEW_SOURCE_DIR})
-
-include_directories(${GLFW_SOURCE_DIR}/include
-                    ${GLFW_SOURCE_DIR}/deps
-                    ${GLM_SOURCE_DIR}
-                    ${GLEW_SOURCE_DIR}/include
-                    ./include)
-
-add_library(glew STATIC
-  ${GLEW_SOURCE_DIR}/src/glew.c
-  ${GLEW_SOURCE_DIR}/include)
-#set(CMAKE_PREFIX_PATH "C:/Users/a.refaat/projects/pointCloudViewer/assimp/out/install/x64-Debug/lib/cmake/Assimp")
-
-#set_target_properties(assimp PROPERTIES LINKER_LANGUAGE C)
-
-target_link_libraries(glew ${GLFW_LIBRARIES})
-
-add_definitions(
-  -DGLEW_STATIC
-)
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 find_package(assimp CONFIG REQUIRED)
-#include_directories("./external/assimp/out/install/x64-Debug/include")
-#add_subdirectory(external/assimp/)
+find_package(glm CONFIG REQUIRED)
+find_package(GLEW CONFIG REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
+find_package(imgui CONFIG REQUIRED)
+find_package(OpenGL REQUIRED)
 
+
+#include_directories(${GLEW_INCLUDE_DIRS})
+#include_directories(${GLFW_INCLUDE_DIRS})
+#include_directories(${OPENGL_INCLUDE_DIRS})
 
 set(APP_NAME "pointCloudViewer")
-#add_executable(${APP_NAME} "SimpleDrawShaderMgr.cpp" "src/parser.cpp" "src/GlShaderMgr.cpp")
-add_executable(${APP_NAME} "main.cpp" "src/parser.cpp" "src/GlShaderMgr.cpp" "src/camera.cpp" "src/renderer.cpp" "src/windowMgr.cpp")
 
 
-target_link_libraries(${APP_NAME} glfw ${GLFW_LIBRARIES} glew)
-target_link_libraries(${APP_NAME} PRIVATE assimp::assimp)
+add_library(parser "src/parser.cpp" "include/parser.h")
+target_link_libraries(parser PUBLIC assimp::assimp)
+
+add_library(camera "src/camera.cpp" "include/camera.h")
+target_link_libraries(camera PUBLIC glm::glm)
+
+add_library(renderer "src/renderer.cpp" "include/renderer.h")
+target_link_libraries(renderer PUBLIC GLEW::GLEW glm::glm)
+
+add_library(windowMgr "src/windowMgr.cpp" "include/windowMgr.h")
+target_link_libraries(windowMgr PUBLIC GLEW::GLEW glfw camera)
+
+add_library(shaderMgr  "src/GlShaderMgr.cpp" "include/GlShaderMgr.h")
+target_link_libraries(shaderMgr PUBLIC GLEW::GLEW glfw)
+
+
+add_library(gui "src/gui.cpp" "include/gui.h")
+target_link_libraries(gui PUBLIC imgui::imgui)
+
+
+add_executable(${APP_NAME} "main.cpp" )
+
+target_link_libraries(${APP_NAME} PRIVATE parser shaderMgr camera renderer windowMgr gui)
+
