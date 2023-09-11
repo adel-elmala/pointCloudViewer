@@ -8,6 +8,7 @@
 #include <GLFW/glfw3.h>
 
 #include "camera.h"
+class gui;
 class WindowMgr
 {
     public:
@@ -16,11 +17,12 @@ class WindowMgr
         ~WindowMgr();
         void setTitle(const std::string& title);
         void attach_camera(camera* camera);
-        bool should_close();
+        void attach_gui_events(bool* gui_WantCaptureMouse,bool* gui_WantCaptureKeyBoard);
+        void attach_gui(gui* pGui);
+        bool should_close();       
 
     private:
-        void setup_callbacks(GLFWwindow* window);
-        
+       void setup_callbacks(GLFWwindow* window);       
        void error_callback(int error, const char* description);
        static void window_size_callback(GLFWwindow* window, int width, int height);
        static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -34,6 +36,8 @@ class WindowMgr
     public:
         // data
         GLFWwindow* m_win;
+        //void* m_win_gui;
+        static gui *m_gui;
         static unsigned int m_win_height;
         static unsigned int m_win_width;
         static bool m_win_resized;
@@ -47,6 +51,7 @@ class WindowMgr
 
         static float m_yaw;	
         static float m_pitch;
+      
 };
 
 

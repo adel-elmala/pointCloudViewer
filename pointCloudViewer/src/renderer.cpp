@@ -1,6 +1,6 @@
 #include "renderer.h"
-#include "GlShaderMgr.h"
-
+// #include "GlShaderMgr.h"
+#include "shaderMgr.h"
 
 renderer::renderer(const std::string& scene_path,const std::string& shader_path):m_scenePath(scene_path),m_shaderPath(shader_path)
 {
@@ -84,22 +84,27 @@ void renderer::setup()
 {
     loadScene();
 
-    GlShaderMgr::LoadShaderSource(m_shaderPath.c_str());
+    // GlShaderMgr::LoadShaderSource(m_shaderPath.c_str());
+    ShaderMgr shdrmgr;
+    shdrmgr.addVertexShader("C:\\Users\\a.refaat\\projects\\pointCloudViewer\\pointCloudViewer\\shaders\\vertex.vs");
+    shdrmgr.addFragmentShader("C:\\Users\\a.refaat\\projects\\pointCloudViewer\\pointCloudViewer\\shaders\\fragment.fs");
+    // shdrmgr.addComputeShader("cshader.cs");
 
-    // Any of the next three options will work for SimpleDrawModern
-#if 1
-    shaderProgram = GlShaderMgr::CompileAndLinkAll();
-#elif 0
-    shaderProgram = GlShaderMgr::CompileAndLinkProgram("vertexShader_PosColorOnly", "fragmentShader_ColorOnly");
-#else
-    unsigned int vertexShader = GlShaderMgr::CompileShader("vertexShader_PosColorOnly");
-    unsigned int fragmentShader = GlShaderMgr::CompileShader("fragmentShader_ColorOnly");
-    unsigned int shaders[2] = { vertexShader, fragmentShader };
-    shaderProgram = GlShaderMgr::LinkShaderProgram(2, shaders);
-#endif
+    shaderProgram = shdrmgr.ID;
+//     // Any of the next three options will work for SimpleDrawModern
+// #if 1
+//     shaderProgram = GlShaderMgr::CompileAndLinkAll();
+// #elif 0
+//     shaderProgram = GlShaderMgr::CompileAndLinkProgram("vertexShader_PosColorOnly", "fragmentShader_ColorOnly");
+// #else
+//     unsigned int vertexShader = GlShaderMgr::CompileShader("vertexShader_PosColorOnly");
+//     unsigned int fragmentShader = GlShaderMgr::CompileShader("fragmentShader_ColorOnly");
+//     unsigned int shaders[2] = { vertexShader, fragmentShader };
+//     shaderProgram = GlShaderMgr::LinkShaderProgram(2, shaders);
+// #endif
 
     // Free up shader compilation resources that are no longer needed.
-    GlShaderMgr::FinalizeCompileAndLink();
+    // GlShaderMgr::FinalizeCompileAndLink();
      
     check_for_opengl_errors();   // Really a great idea to check for errors -- esp. good for debugging!
 }

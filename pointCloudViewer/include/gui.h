@@ -6,18 +6,24 @@
 #include "imgui_impl_opengl3.h"
 
 #define GL_SILENCE_DEPRECATION
+
+#include "windowMgr.h"
+//class WindowMgr;
 class gui
 {
 private:
     /* data */
-    void * m_window;
-    ImGuiIO io;
+    // void * m_window;
+
 public:
-    gui(void * window);
+    gui(WindowMgr * window_mgr);
     ~gui();
     void setup();
     void confg();
     void render();
+    ImGuiIO io;
+    WindowMgr *m_winMgr;
+
 };
 
 

@@ -38,10 +38,12 @@ int main(int argc, char const *argv[])
     int frameCounter = 0;
     double previousTime = glfwGetTime();
 
-    gui dearGui((void*)win.m_win);
+    gui dearGui(&win);
 
     dearGui.setup();
 
+    win.attach_gui(&dearGui);
+    
     while (!win.should_close())
     {
 

@@ -36,6 +36,8 @@ target_link_libraries(windowMgr PUBLIC GLEW::GLEW glfw camera)
 add_library(shaderMgr  "src/GlShaderMgr.cpp" "include/GlShaderMgr.h")
 target_link_libraries(shaderMgr PUBLIC GLEW::GLEW glfw)
 
+add_library(shaderMgr2 "src/shaderMgr.cpp" "include/shaderMgr.h")
+target_link_libraries(shaderMgr2 PUBLIC GLEW::GLEW glfw)
 
 add_library(gui "src/gui.cpp" "include/gui.h")
 target_link_libraries(gui PUBLIC imgui::imgui)
@@ -43,5 +45,5 @@ target_link_libraries(gui PUBLIC imgui::imgui)
 
 add_executable(${APP_NAME} "main.cpp" )
 
-target_link_libraries(${APP_NAME} PRIVATE parser shaderMgr camera renderer windowMgr gui)
+target_link_libraries(${APP_NAME} PRIVATE parser shaderMgr2 camera renderer windowMgr gui)
 
