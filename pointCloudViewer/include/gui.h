@@ -10,32 +10,27 @@
 #include <glm/glm.hpp>
 #include "windowMgr.h"
 #include "renderer.h"
-//class WindowMgr;
+
+// class WindowMgr;
 class gui
 {
 private:
     /* data */
-    // void * m_window;
 
 public:
-    gui(WindowMgr * window_mgr);
+    gui(WindowMgr *window_mgr);
     ~gui();
     void setup();
     void confg();
     void render();
-    void attatch_renderer(renderer* rndrer);
-
+    void attatch_renderer(renderer *rndrer);
 
     ImGuiIO io;
     WindowMgr *m_winMgr;
-    renderer* m_renderer;
+    renderer *m_renderer;
     
     ImVec4 m_color;
     float m_cameraSpeed;
-
 };
-
-
-
 
 #endif

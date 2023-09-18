@@ -1,8 +1,8 @@
 #include "windowMgr.h"
 #include "camera.h"
 #include "imgui_impl_glfw.h"
-
 #include "gui.h"
+
 unsigned int WindowMgr::m_win_height = 0;
 unsigned int WindowMgr::m_win_width = 0;
 bool WindowMgr::m_win_resized = false;
@@ -18,8 +18,6 @@ float WindowMgr::m_lastY = 0;
 gui *WindowMgr::m_gui = nullptr;
 float WindowMgr::m_camera_speed = 100;
 
-
-
 void WindowMgr::error_callback(int error, const char *description)
 {
 	// Print error
@@ -33,9 +31,6 @@ WindowMgr::WindowMgr(const std::string &win_title, unsigned int win_width, unsig
 	m_win_resized = false;
 	m_firstMouse = false;
 
-	// m_gui = new gui(this);
-
-	// glfwSetErrorCallback((GLFWerrorfun)error_callback);	// Supposed to be called in event of errors. (doesn't work?)
 	glfwInit();
 #if defined(__APPLE__) || defined(__linux__)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -86,7 +81,6 @@ void WindowMgr::window_size_callback(GLFWwindow *window, int width, int height)
 	glViewport(0, 0, width, height); // Draw into entire window
 	m_win_height = height;
 	m_win_width = width;
-	// glm::mat4 projection = glm::perspective(float(glm::radians(fov)), (float)window_width / (float)window_height, 0.1f, 1000.0f);
 }
 void WindowMgr::key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
@@ -98,11 +92,6 @@ void WindowMgr::key_callback(GLFWwindow *window, int key, int scancode, int acti
 	{
 		glfwSetWindowShouldClose(window, true);
 	}
-	// float senstivity;
-	// if ((1.0 / m_deltaTime) < 3000)
-	//	senstivity = 10000.0;
-	// else
-	//	senstivity = 1000.0;
 
 	float cameraSpeed = static_cast<float>(m_camera_speed * m_deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
@@ -118,8 +107,6 @@ void WindowMgr::key_callback(GLFWwindow *window, int key, int scancode, int acti
 void WindowMgr::mouse_callback(GLFWwindow *window, double xposIn, double yposIn)
 {
 
-	// m_gui->io = ImGui::GetIO();
-	// m_gui->io.AddMousePosEvent(xposIn,yposIn);
 	if (!(m_gui->io.WantCaptureMouse))
 	{
 
@@ -139,8 +126,6 @@ void WindowMgr::mouse_callback(GLFWwindow *window, double xposIn, double yposIn)
 		if (m_rightMouseClicked)
 		{
 
-			// float xoffset = xpos - (window_width/2);
-			// float yoffset = (window_height/2) - ypos; // reversed since y-coordinates go from bottom to top
 			float sensitivity = 0.1f; // change this value to your liking
 			xoffset *= sensitivity;
 			yoffset *= sensitivity;

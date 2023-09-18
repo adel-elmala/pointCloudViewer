@@ -39,10 +39,9 @@ public:
     parser2();
     ~parser2();
     void read_file(const std::string &filepath, const bool preload_into_memory = true);
-  
+
     /* data */
     std::vector<float3> verts;
-
 };
 
 #endif

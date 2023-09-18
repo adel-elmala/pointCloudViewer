@@ -37,8 +37,8 @@ target_link_libraries(renderer PUBLIC GLEW::GLEW glm::glm)
 add_library(windowMgr "src/windowMgr.cpp" "include/windowMgr.h")
 target_link_libraries(windowMgr PUBLIC GLEW::GLEW glfw camera)
 
-add_library(shaderMgr  "src/GlShaderMgr.cpp" "include/GlShaderMgr.h")
-target_link_libraries(shaderMgr PUBLIC GLEW::GLEW glfw)
+#add_library(shaderMgr  "src/GlShaderMgr.cpp" "include/GlShaderMgr.h")
+#target_link_libraries(shaderMgr PUBLIC GLEW::GLEW glfw)
 
 add_library(shaderMgr2 "src/shaderMgr.cpp" "include/shaderMgr.h")
 target_link_libraries(shaderMgr2 PUBLIC GLEW::GLEW glfw)

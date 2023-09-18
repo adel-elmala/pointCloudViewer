@@ -7,7 +7,6 @@
 #include "renderer.h"
 #include "camera.h"
 #include "gui.h"
-
 #include "parser2.h"
 
 int main(int argc, char const *argv[])
@@ -24,8 +23,10 @@ int main(int argc, char const *argv[])
     win.attach_camera(&cam);
     std::string model_path = "C:\\Users\\a.refaat\\projects\\pointCloudViewer\\assets\\dragon.ply";
     std::string shader_path = "C:\\Users\\a.refaat\\projects\\pointCloudViewer\\\pointCloudViewer\\shaders";
+
     renderer rndr(model_path, shader_path);
     rndr.setup();
+   
     glm::mat4 projection = glm::perspective(float(glm::radians(cam.m_fov)), (float)win.m_win_width / (float)win.m_win_height, 0.1f, 1000.0f);
     glm::mat4 view = cam.m_view;
     glm::mat4 model = glm::mat4(1.0f);
@@ -41,7 +42,6 @@ int main(int argc, char const *argv[])
 
     gui dearGui(&win);
     dearGui.attatch_renderer(&rndr);
-
     dearGui.setup();
 
     win.attach_gui(&dearGui);

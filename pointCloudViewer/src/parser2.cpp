@@ -52,7 +52,6 @@ public:
     const double &get() { return timestamp; }
 };
 
-
 parser2::parser2()
 {
 }
@@ -233,20 +232,10 @@ void parser2::read_file(const std::string &filepath, const bool preload_into_mem
             std::memcpy(verts.data(), vertices->buffer.get(), numVerticesBytes);
         }
 
-        // // Example Two: converting to your own application type
-        // {
-        //     std::vector<float3> verts_floats;
-        //     std::vector<double3> verts_doubles;
-        //     if (vertices->t == tinyply::Type::FLOAT32)
-        //     { /* as floats ... */
-        //     }
-        //     if (vertices->t == tinyply::Type::FLOAT64)
-        //     { /* as doubles ... */
-        //     }
-        // }
     }
     catch (const std::exception &e)
     {
         std::cerr << "Caught tinyply exception: " << e.what() << std::endl;
     }
+    std::cout << "........................................................................\n";
 }
