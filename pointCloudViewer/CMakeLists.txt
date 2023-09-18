@@ -12,6 +12,7 @@ find_package(GLEW CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 find_package(OpenGL REQUIRED)
+find_package(tinyply CONFIG REQUIRED)
 
 
 #include_directories(${GLEW_INCLUDE_DIRS})
@@ -23,6 +24,9 @@ set(APP_NAME "pointCloudViewer")
 
 add_library(parser "src/parser.cpp" "include/parser.h")
 target_link_libraries(parser PUBLIC assimp::assimp)
+
+add_library(parser2 "src/parser2.cpp" "include/parser2.h")
+target_link_libraries(parser2 PUBLIC tinyply)
 
 add_library(camera "src/camera.cpp" "include/camera.h")
 target_link_libraries(camera PUBLIC glm::glm)
@@ -45,5 +49,6 @@ target_link_libraries(gui PUBLIC imgui::imgui)
 
 add_executable(${APP_NAME} "main.cpp" )
 
-target_link_libraries(${APP_NAME} PRIVATE parser shaderMgr2 camera renderer windowMgr gui)
+
+target_link_libraries(${APP_NAME} PRIVATE parser shaderMgr2 camera renderer windowMgr gui parser2)
 

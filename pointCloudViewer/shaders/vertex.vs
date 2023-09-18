@@ -8,7 +8,7 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 proj;
 
-
+uniform vec3 color;
 float rand(vec2 co){
     return fract(sin(dot(co, vec2(12.9898, 78.233))) * 43758.5453);
 }
@@ -23,5 +23,5 @@ void main()
    
 gl_Position = proj*view*model*vec4(vertPos.xyz, 1.0);
 
-  theColor = vertPos;
+  theColor = color;
 }

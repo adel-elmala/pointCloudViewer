@@ -51,6 +51,7 @@ class WindowMgr
 
         static float m_yaw;	
         static float m_pitch;
+        static float m_camera_speed;
       
 };
 

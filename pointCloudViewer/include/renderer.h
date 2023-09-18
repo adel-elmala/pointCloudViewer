@@ -3,7 +3,8 @@
 
 
 
-#include "parser.h"
+// #include "parser.h"
+#include "parser2.h"
 #include <GL/glew.h> 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -15,7 +16,7 @@ class renderer
 private:
     /* data */
     bool check_for_opengl_errors();
-    parser *m_parser;
+    parser2 *m_parser;
 public:
     renderer(const std::string& scene_path,const std::string& shader_path);
     ~renderer();
@@ -24,7 +25,9 @@ public:
     void setup();
     void useProgram();
     void setUniformMat4(const std::string& name,glm::mat4& matrix);
-    
+    void setUniformVec3(const std::string& name, glm::vec3& vect);
+
+
     unsigned int myVBO[1];  // Vertex Buffer Object - holds an array of data
     unsigned int myVAO[1];  // Vertex Array Object - holds info about an array of vertex data;
 

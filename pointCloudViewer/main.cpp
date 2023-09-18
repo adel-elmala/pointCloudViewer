@@ -8,6 +8,7 @@
 #include "camera.h"
 #include "gui.h"
 
+#include "parser2.h"
 
 int main(int argc, char const *argv[])
 {
@@ -21,9 +22,9 @@ int main(int argc, char const *argv[])
     WindowMgr win("Point Cloud Viewer", 800, 800);
 
     win.attach_camera(&cam);
-    std::string model_path = "C:\\Users\\a.refaat\\projects\\pointCloudViewer\\assets\\fragment.ply";
-    std::string shader_path =  "C:\\Users\\a.refaat\\projects\\pointCloudViewer\\pointCloudViewer\\SimpleDraw.glsl";
-    renderer rndr(model_path,shader_path);
+    std::string model_path = "C:\\Users\\a.refaat\\projects\\pointCloudViewer\\assets\\dragon.ply";
+    std::string shader_path = "C:\\Users\\a.refaat\\projects\\pointCloudViewer\\\pointCloudViewer\\shaders";
+    renderer rndr(model_path, shader_path);
     rndr.setup();
     glm::mat4 projection = glm::perspective(float(glm::radians(cam.m_fov)), (float)win.m_win_width / (float)win.m_win_height, 0.1f, 1000.0f);
     glm::mat4 view = cam.m_view;
@@ -34,26 +35,30 @@ int main(int argc, char const *argv[])
     rndr.setUniformMat4("view", view);
     rndr.setUniformMat4("proj", projection);
     rndr.setUniformMat4("model", model);
-
+    
     int frameCounter = 0;
     double previousTime = glfwGetTime();
 
     gui dearGui(&win);
+    dearGui.attatch_renderer(&rndr);
 
     dearGui.setup();
 
     win.attach_gui(&dearGui);
-    
+    double accumDelta = 0;
     while (!win.should_close())
     {
 
         double currentTime = glfwGetTime();
         frameCounter++;
+        win.m_deltaTime = currentTime - previousTime;
+        accumDelta += win.m_deltaTime;
         if (frameCounter >= 50)
         {
+            accumDelta /= 50.0;
+            win.setTitle((std::string("FPS: ") + std::to_string(1.0 / (accumDelta))).c_str());
             frameCounter = 0;
-            win.m_deltaTime = currentTime - previousTime;
-            win.setTitle((std::string("FPS: ") + std::to_string(1.0 / (win.m_deltaTime))).c_str());
+            accumDelta = 0;
         }
         previousTime = currentTime;
 
@@ -65,7 +70,7 @@ int main(int argc, char const *argv[])
         }
         cam.update();
         view = cam.m_view;
-        rndr.setUniformMat4("view",view);
+        rndr.setUniformMat4("view", view);
 
         rndr.render();
         dearGui.confg();

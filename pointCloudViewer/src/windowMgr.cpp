@@ -8,29 +8,32 @@ unsigned int WindowMgr::m_win_width = 0;
 bool WindowMgr::m_win_resized = false;
 double WindowMgr::m_deltaTime = 0;
 bool WindowMgr::m_rightMouseClicked = false;
-camera* WindowMgr::m_camera = nullptr;
+camera *WindowMgr::m_camera = nullptr;
 
 float WindowMgr::m_yaw = 90.0;
 float WindowMgr::m_pitch = 0.0;
 bool WindowMgr::m_firstMouse = false;
 float WindowMgr::m_lastX = 0;
 float WindowMgr::m_lastY = 0;
-gui * WindowMgr::m_gui = nullptr;
+gui *WindowMgr::m_gui = nullptr;
+float WindowMgr::m_camera_speed = 100;
 
-void WindowMgr::error_callback(int error, const char* description)
+
+
+void WindowMgr::error_callback(int error, const char *description)
 {
 	// Print error
 	fputs(description, stderr);
 }
-WindowMgr::WindowMgr(const std::string& win_title , unsigned int win_width, unsigned int win_height){
-    m_win_width = win_width ;
-    m_win_height = win_height;
-    m_win_title = win_title;
-    m_win_resized = false;
-    m_firstMouse = false;
-	
-	//m_gui = new gui(this);
+WindowMgr::WindowMgr(const std::string &win_title, unsigned int win_width, unsigned int win_height)
+{
+	m_win_width = win_width;
+	m_win_height = win_height;
+	m_win_title = win_title;
+	m_win_resized = false;
+	m_firstMouse = false;
 
+	// m_gui = new gui(this);
 
 	// glfwSetErrorCallback((GLFWerrorfun)error_callback);	// Supposed to be called in event of errors. (doesn't work?)
 	glfwInit();
@@ -41,59 +44,67 @@ WindowMgr::WindowMgr(const std::string& win_title , unsigned int win_width, unsi
 	// glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 	m_win = glfwCreateWindow(m_win_width, m_win_height, m_win_title.c_str(), NULL, NULL);
-	if (m_win == NULL) {
+	if (m_win == NULL)
+	{
 		fprintf(stdout, "Failed to create GLFW window!\n");
 		glfwTerminate();
 	}
 	glfwMakeContextCurrent(m_win);
 	glfwSwapInterval(0);
 
-    setup_callbacks(m_win);
+	setup_callbacks(m_win);
 }
 WindowMgr::~WindowMgr()
 {
-    glfwTerminate();
+	glfwTerminate();
 }
 bool WindowMgr::should_close()
 {
-    return glfwWindowShouldClose(m_win);
+	return glfwWindowShouldClose(m_win);
 }
-void WindowMgr::setTitle(const std::string& title)
+void WindowMgr::setTitle(const std::string &title)
 {
-    glfwSetWindowTitle(m_win,title.c_str());
+	glfwSetWindowTitle(m_win, title.c_str());
 }
-void WindowMgr::setup_callbacks(GLFWwindow* win) {
+void WindowMgr::setup_callbacks(GLFWwindow *win)
+{
 	// Set callback function for resizing the window
-	glfwSetFramebufferSizeCallback(m_win, (GLFWframebuffersizefun) window_size_callback);
+	glfwSetFramebufferSizeCallback(m_win, (GLFWframebuffersizefun)window_size_callback);
 
 	// Set callback for key up/down/repeat events
-	glfwSetKeyCallback(m_win,(GLFWkeyfun)key_callback);
+	glfwSetKeyCallback(m_win, (GLFWkeyfun)key_callback);
 
 	// Set callbacks for mouse movement (cursor position) and mouse botton up/down events.
-	glfwSetCursorPosCallback(m_win, (GLFWcursorposfun) mouse_callback);
-	glfwSetMouseButtonCallback(m_win, (GLFWmousebuttonfun) mouse_button_callback);
-    // glfwSetScrollCallback(m_win,scroll_callback);
+	glfwSetCursorPosCallback(m_win, (GLFWcursorposfun)mouse_callback);
+	glfwSetMouseButtonCallback(m_win, (GLFWmousebuttonfun)mouse_button_callback);
+	// glfwSetScrollCallback(m_win,scroll_callback);
 }
 
-void WindowMgr::window_size_callback(GLFWwindow* window, int width, int height) {
+void WindowMgr::window_size_callback(GLFWwindow *window, int width, int height)
+{
 	m_win_resized = true;
-	glViewport(0, 0, width, height);		// Draw into entire window
+	glViewport(0, 0, width, height); // Draw into entire window
 	m_win_height = height;
 	m_win_width = width;
-	//glm::mat4 projection = glm::perspective(float(glm::radians(fov)), (float)window_width / (float)window_height, 0.1f, 1000.0f);
-	
-
+	// glm::mat4 projection = glm::perspective(float(glm::radians(fov)), (float)window_width / (float)window_height, 0.1f, 1000.0f);
 }
-void WindowMgr::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+void WindowMgr::key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
-	if (action == GLFW_RELEASE) {
-		return;			// Ignore key up (key release) events
+	if (action == GLFW_RELEASE)
+	{
+		return; // Ignore key up (key release) events
 	}
-	if (key == GLFW_KEY_ESCAPE || key == GLFW_KEY_X) {
+	if (key == GLFW_KEY_ESCAPE || key == GLFW_KEY_X)
+	{
 		glfwSetWindowShouldClose(window, true);
 	}
-		
-	float cameraSpeed = static_cast<float>(10000.0 * m_deltaTime);
+	// float senstivity;
+	// if ((1.0 / m_deltaTime) < 3000)
+	//	senstivity = 10000.0;
+	// else
+	//	senstivity = 1000.0;
+
+	float cameraSpeed = static_cast<float>(m_camera_speed * m_deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		m_camera->m_cameraPos += cameraSpeed * m_camera->m_cameraFront;
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -102,15 +113,13 @@ void WindowMgr::key_callback(GLFWwindow* window, int key, int scancode, int acti
 		m_camera->m_cameraPos -= glm::normalize(glm::cross(m_camera->m_cameraFront, m_camera->m_cameraUp)) * cameraSpeed;
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		m_camera->m_cameraPos += glm::normalize(glm::cross(m_camera->m_cameraFront, m_camera->m_cameraUp)) * cameraSpeed;
-		
 }
 
-
-void WindowMgr::mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
+void WindowMgr::mouse_callback(GLFWwindow *window, double xposIn, double yposIn)
 {
 
-	//m_gui->io = ImGui::GetIO();
-	//m_gui->io.AddMousePosEvent(xposIn,yposIn);
+	// m_gui->io = ImGui::GetIO();
+	// m_gui->io.AddMousePosEvent(xposIn,yposIn);
 	if (!(m_gui->io.WantCaptureMouse))
 	{
 
@@ -129,10 +138,10 @@ void WindowMgr::mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 
 		if (m_rightMouseClicked)
 		{
-	
+
 			// float xoffset = xpos - (window_width/2);
 			// float yoffset = (window_height/2) - ypos; // reversed since y-coordinates go from bottom to top
-			float sensitivity = 0.01f; // change this value to your liking
+			float sensitivity = 0.1f; // change this value to your liking
 			xoffset *= sensitivity;
 			yoffset *= sensitivity;
 
@@ -156,28 +165,28 @@ void WindowMgr::mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
 // ----------------------------------------------------------------------
-void WindowMgr::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+void WindowMgr::scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
 {
-    m_camera->m_fov -= (float)yoffset;
-    if (m_camera->m_fov < 1.0f)
-        m_camera->m_fov = 1.0f;
-    if (m_camera->m_fov > 45.0f)
-        m_camera->m_fov = 45.0f;
+	m_camera->m_fov -= (float)yoffset;
+	if (m_camera->m_fov < 1.0f)
+		m_camera->m_fov = 1.0f;
+	if (m_camera->m_fov > 45.0f)
+		m_camera->m_fov = 45.0f;
 }
-void WindowMgr::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+void WindowMgr::mouse_button_callback(GLFWwindow *window, int button, int action, int mods)
 {
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
-        m_rightMouseClicked = true;
-	
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
-        m_rightMouseClicked = false;
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+		m_rightMouseClicked = true;
+
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
+		m_rightMouseClicked = false;
 }
-void WindowMgr::attach_camera(camera* camera)
+void WindowMgr::attach_camera(camera *camera)
 {
-    m_camera = camera;
+	m_camera = camera;
 }
-void WindowMgr::attach_gui(gui* pGui)
+void WindowMgr::attach_gui(gui *pGui)
 {
-	if(pGui)
+	if (pGui)
 		m_gui = pGui;
 }

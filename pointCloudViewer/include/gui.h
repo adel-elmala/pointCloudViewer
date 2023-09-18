@@ -7,7 +7,9 @@
 
 #define GL_SILENCE_DEPRECATION
 
+#include <glm/glm.hpp>
 #include "windowMgr.h"
+#include "renderer.h"
 //class WindowMgr;
 class gui
 {
@@ -21,8 +23,15 @@ public:
     void setup();
     void confg();
     void render();
+    void attatch_renderer(renderer* rndrer);
+
+
     ImGuiIO io;
     WindowMgr *m_winMgr;
+    renderer* m_renderer;
+    
+    ImVec4 m_color;
+    float m_cameraSpeed;
 
 };
 

@@ -4,7 +4,8 @@
 
 renderer::renderer(const std::string& scene_path,const std::string& shader_path):m_scenePath(scene_path),m_shaderPath(shader_path)
 {
-    m_parser = new parser(scene_path);
+    m_parser = new parser2();
+    m_parser->read_file(scene_path);
     glewInit();
 }
 
@@ -24,7 +25,7 @@ void renderer::render()
 	// Draw three points
 	glBindVertexArray(myVAO[0]);
 	// glVertexAttrib3f(vertColor_loc, 1.0f, 0.5f, 0.2f);		// An orange-red color (R, G, B values).
-	glDrawArrays(GL_POINTS, 0, m_parser->m_nVerts);
+	glDrawArrays(GL_POINTS, 0, m_parser->verts.size());
     check_for_opengl_errors();   // Really a great idea to check for errors -- esp. good for debugging!
 }
 void renderer::loadScene()
@@ -63,12 +64,12 @@ void renderer::loadScene()
 	// glVertexAttribPointer(vertPos_loc, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)0);
 	// glEnableVertexAttribArray(vertPos_loc);
 	
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * (m_parser->m_nVerts), m_parser->m_verticies, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * (m_parser->verts.size()), &(m_parser->verts[0]), GL_STATIC_DRAW);
 	glVertexAttribPointer(vertPos_loc,3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)(0));
 	glEnableVertexAttribArray(vertPos_loc);
 
-	// glVertexAttribPointer(vertColor_loc, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)(3*sizeof(float)));
-	// glEnableVertexAttribArray(vertColor_loc);
+	 //glVertexAttribPointer(vertColor_loc, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)(3*sizeof(float)));
+     //glEnableVertexAttribArray(vertColor_loc);
 
 	// This is optional, but allowed.  The VAO already knows which buffer (VBO) is holding its
 	//     vertex data, so it is OK to unbind the VBO here.
@@ -86,8 +87,8 @@ void renderer::setup()
 
     // GlShaderMgr::LoadShaderSource(m_shaderPath.c_str());
     ShaderMgr shdrmgr;
-    shdrmgr.addVertexShader("C:\\Users\\a.refaat\\projects\\pointCloudViewer\\pointCloudViewer\\shaders\\vertex.vs");
-    shdrmgr.addFragmentShader("C:\\Users\\a.refaat\\projects\\pointCloudViewer\\pointCloudViewer\\shaders\\fragment.fs");
+    shdrmgr.addVertexShader((m_shaderPath + "\\vertex.vs").c_str());
+    shdrmgr.addFragmentShader((m_shaderPath + "\\fragment.fs").c_str());
     // shdrmgr.addComputeShader("cshader.cs");
 
     shaderProgram = shdrmgr.ID;
@@ -116,6 +117,11 @@ void renderer::useProgram()
 void renderer::setUniformMat4(const std::string& name,glm::mat4& matrix)
 {
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram,name.c_str()),1,GL_FALSE,&matrix[0][0]);
+
+}
+void renderer::setUniformVec3(const std::string& name, glm::vec3& vect)
+{
+    glUniform3fv(glGetUniformLocation(shaderProgram, name.c_str()), 1, &vect[0]);
 
 }
 char errNames[8][36] = {
