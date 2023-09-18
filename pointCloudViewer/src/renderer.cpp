@@ -1,11 +1,8 @@
 #include "renderer.h"
-// #include "GlShaderMgr.h"
 #include "shaderMgr.h"
 
-renderer::renderer(const std::string &scene_path, const std::string &shader_path) : m_scenePath(scene_path), m_shaderPath(shader_path)
+renderer::renderer(const std::string &scene_path, const std::string &shader_path,bool use_compute_shader) : m_scenePath(scene_path), m_shaderPath(shader_path), m_use_compute_shader(use_compute_shader)
 {
-    m_parser = new parser2();
-    m_parser->read_file(scene_path);
     glewInit();
 }
 
@@ -17,32 +14,30 @@ void renderer::render()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // This very simple shader program is used for all the items.
     glUseProgram(shaderProgram);
 
-    // Draw three points
     glBindVertexArray(myVAO[0]);
     glDrawArrays(GL_POINTS, 0, m_parser->verts.size());
     check_for_opengl_errors(); // Really a great idea to check for errors -- esp. good for debugging!
 }
 void renderer::loadScene()
 {
+    m_parser = new parser2();
+    m_parser->read_file(m_scenePath);
+    
     // Allocate Vertex Array Objects (VAOs) and Vertex Buffer Objects (VBOs).
     glGenVertexArrays(1, &myVAO[0]);
     glGenBuffers(1, &myVBO[0]);
 
-    // THIRD GEOMETRY: Three triangles
-    // Will render with GL_TRIANGLES
+    /*  VVV use this triangle for debugging if needed VVV */
     // float trianglesVerts[] = {
     // 	// x,y,z coordinates	// R,G,B colors
     // 	0.7f, -0.42f, 0.0f,		1.0f, 0.8f, 0.8f, // First triangle
     // 	0.7f, -0.18f, 0.0f,		1.0f, 0.8f, 0.8f,
     // 	-0.7f, -0.3f, 0.5f,		1.0f, 0.0f, 0.0f,
-
     // 	-0.25f, 0.7f, 0.0f,		0.8f, 1.0f, 0.8f, // Second triangle
     // 	-0.40f, 0.55f, 0.0f,	0.8f, 1.0f, 0.8f,
     // 	0.5f, -0.6f, 0.5f,		0.0f, 1.0f, 0.0f,
-
     // 	-0.57f, -0.53f, 0.0f,	0.8f,  0.8f, 1.0f,	// Third triangle
     // 	-0.43f, -0.67f, 0.0f,	0.8f,  0.8f, 1.0f,
     // 	0.32f, 0.62f, 0.5f,		0.0f,  0.0f, 1.0f,
@@ -50,16 +45,13 @@ void renderer::loadScene()
 
     glBindVertexArray(myVAO[0]);
     glBindBuffer(GL_ARRAY_BUFFER, myVBO[0]);
-
+    
+    /* buffer the parsed vertices */
     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * (m_parser->verts.size()), &(m_parser->verts[0]), GL_STATIC_DRAW);
     glVertexAttribPointer(vertPos_loc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)(0));
     glEnableVertexAttribArray(vertPos_loc);
 
-    // This is optional, but allowed.  The VAO already knows which buffer (VBO) is holding its
-    //     vertex data, so it is OK to unbind the VBO here.
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    // Also optional, but perhaps a good idea so that the last VAO is not used by accident.
+    // optional, but perhaps a good idea so that the last VAO is not used by accident.
     glBindVertexArray(0);
 
     check_for_opengl_errors(); // Really a great idea to check for errors -- esp. good for debugging!
@@ -69,11 +61,16 @@ void renderer::setup()
 {
     loadScene();
 
-    // GlShaderMgr::LoadShaderSource(m_shaderPath.c_str());
     ShaderMgr shdrmgr;
-    shdrmgr.addVertexShader((m_shaderPath + "\\vertex.vs").c_str());
-    shdrmgr.addFragmentShader((m_shaderPath + "\\fragment.fs").c_str());
-
+    if(!m_use_compute_shader)
+    {
+        shdrmgr.addVertexShader((m_shaderPath + "\\vertex.vs").c_str());
+        shdrmgr.addFragmentShader((m_shaderPath + "\\fragment.fs").c_str());
+    }
+    else 
+    {
+        shdrmgr.addComputeShader((m_shaderPath + "\\compute.comp").c_str());
+    }
     shaderProgram = shdrmgr.ID;
 
     check_for_opengl_errors(); // Really a great idea to check for errors -- esp. good for debugging!

@@ -171,36 +171,36 @@ void parser2::read_file(const std::string &filepath, const bool preload_into_mem
             std::cerr << "tinyply exception: " << e.what() << std::endl;
         }
 
-        try
-        {
-            texcoords = file.request_properties_from_element("vertex", {"u", "v"});
-        }
-        catch (const std::exception &e)
-        {
-            std::cerr << "tinyply exception: " << e.what() << std::endl;
-        }
+        //try
+        //{
+        //    texcoords = file.request_properties_from_element("vertex", {"u", "v"});
+        //}
+        //catch (const std::exception &e)
+        //{
+        //    std::cerr << "tinyply exception: " << e.what() << std::endl;
+        //}
 
-        // Providing a list size hint (the last argument) is a 2x performance improvement. If you have
-        // arbitrary ply files, it is best to leave this 0.
-        try
-        {
-            faces = file.request_properties_from_element("face", {"vertex_indices"}, 3);
-        }
-        catch (const std::exception &e)
-        {
-            std::cerr << "tinyply exception: " << e.what() << std::endl;
-        }
+        //// Providing a list size hint (the last argument) is a 2x performance improvement. If you have
+        //// arbitrary ply files, it is best to leave this 0.
+        //try
+        //{
+        //    faces = file.request_properties_from_element("face", {"vertex_indices"}, 3);
+        //}
+        //catch (const std::exception &e)
+        //{
+        //    std::cerr << "tinyply exception: " << e.what() << std::endl;
+        //}
 
-        // Tristrips must always be read with a 0 list size hint (unless you know exactly how many elements
-        // are specifically in the file, which is unlikely);
-        try
-        {
-            tripstrip = file.request_properties_from_element("tristrips", {"vertex_indices"}, 0);
-        }
-        catch (const std::exception &e)
-        {
-            std::cerr << "tinyply exception: " << e.what() << std::endl;
-        }
+        //// Tristrips must always be read with a 0 list size hint (unless you know exactly how many elements
+        //// are specifically in the file, which is unlikely);
+        //try
+        //{
+        //    tripstrip = file.request_properties_from_element("tristrips", {"vertex_indices"}, 0);
+        //}
+        //catch (const std::exception &e)
+        //{
+        //    std::cerr << "tinyply exception: " << e.what() << std::endl;
+        //}
 
         manual_timer read_timer;
 

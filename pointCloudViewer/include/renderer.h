@@ -16,12 +16,12 @@ private:
     parser2 *m_parser;
 
 public:
-    renderer(const std::string &scene_path, const std::string &shader_path);
+    renderer(const std::string &scene_path, const std::string &shader_path, bool use_compute_shader = false);
     ~renderer();
     void loadScene();
-    void render();
     void setup();
     void useProgram();
+    void render();
     void setUniformMat4(const std::string &name, glm::mat4 &matrix);
     void setUniformVec3(const std::string &name, glm::vec3 &vect);
 
@@ -32,6 +32,7 @@ public:
     unsigned int shaderProgram;
     const unsigned int vertPos_loc = 0;   // Corresponds to "location = 0" in the verter shader definition
     const unsigned int vertColor_loc = 1; // Corresponds to "location = 1" in the verter shader definition
+    bool m_use_compute_shader;
 
     glm::mat4 m_projection;
     glm::mat4 m_model;
