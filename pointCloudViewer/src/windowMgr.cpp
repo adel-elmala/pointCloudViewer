@@ -107,7 +107,7 @@ void WindowMgr::key_callback(GLFWwindow *window, int key, int scancode, int acti
 void WindowMgr::mouse_callback(GLFWwindow *window, double xposIn, double yposIn)
 {
 
-	if (!(m_gui->io.WantCaptureMouse))
+	if (m_gui && !(m_gui->io.WantCaptureMouse))
 	{
 
 		float xpos = static_cast<float>(xposIn);

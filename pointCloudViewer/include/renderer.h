@@ -14,16 +14,17 @@ private:
     /* data */
     bool check_for_opengl_errors();
     parser2 *m_parser;
+    void loadScene();
 
 public:
     renderer(const std::string &scene_path, const std::string &shader_path, bool use_compute_shader = false);
     ~renderer();
-    void loadScene();
     void setup();
     void useProgram();
     void render();
     void setUniformMat4(const std::string &name, glm::mat4 &matrix);
     void setUniformVec3(const std::string &name, glm::vec3 &vect);
+    void setFloat(const std::string &name, float &value);
 
     unsigned int myVBO[1]; // Vertex Buffer Object - holds an array of data
     unsigned int myVAO[1]; // Vertex Array Object - holds info about an array of vertex data;

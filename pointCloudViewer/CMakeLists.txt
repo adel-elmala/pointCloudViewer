@@ -22,8 +22,8 @@ find_package(tinyply CONFIG REQUIRED)
 set(APP_NAME "pointCloudViewer")
 
 
-add_library(parser "src/parser.cpp" "include/parser.h")
-target_link_libraries(parser PUBLIC assimp::assimp)
+# add_library(parser "src/parser.cpp" "include/parser.h")
+# target_link_libraries(parser PUBLIC assimp::assimp)
 
 add_library(parser2 "src/parser2.cpp" "include/parser2.h")
 target_link_libraries(parser2 PUBLIC tinyply)
@@ -37,8 +37,8 @@ target_link_libraries(renderer PUBLIC GLEW::GLEW glm::glm)
 add_library(windowMgr "src/windowMgr.cpp" "include/windowMgr.h")
 target_link_libraries(windowMgr PUBLIC GLEW::GLEW glfw camera)
 
-#add_library(shaderMgr  "src/GlShaderMgr.cpp" "include/GlShaderMgr.h")
-#target_link_libraries(shaderMgr PUBLIC GLEW::GLEW glfw)
+# add_library(shaderMgr  "src/GlShaderMgr.cpp" "include/GlShaderMgr.h")
+# target_link_libraries(shaderMgr PUBLIC GLEW::GLEW glfw)
 
 add_library(shaderMgr2 "src/shaderMgr.cpp" "include/shaderMgr.h")
 target_link_libraries(shaderMgr2 PUBLIC GLEW::GLEW glfw)
@@ -50,5 +50,5 @@ target_link_libraries(gui PUBLIC imgui::imgui)
 add_executable(${APP_NAME} "main.cpp" )
 
 
-target_link_libraries(${APP_NAME} PRIVATE parser shaderMgr2 camera renderer windowMgr gui parser2)
+target_link_libraries(${APP_NAME} PUBLIC GLEW::GLEW shaderMgr2 camera renderer windowMgr gui parser2)
 

@@ -1,20 +1,21 @@
 #include "renderer.h"
 #include "shaderMgr.h"
 
-renderer::renderer(const std::string &scene_path, const std::string &shader_path,bool use_compute_shader) : m_scenePath(scene_path), m_shaderPath(shader_path), m_use_compute_shader(use_compute_shader)
+renderer::renderer(const std::string &scene_path, const std::string &shader_path, bool use_compute_shader) : m_scenePath(scene_path), m_shaderPath(shader_path), m_use_compute_shader(use_compute_shader),m_parser(nullptr)
 {
     glewInit();
 }
 
 renderer::~renderer()
 {
-    delete m_parser;
+    if (m_parser != nullptr)
+        delete m_parser;
 }
 void renderer::render()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glUseProgram(shaderProgram);
+    useProgram();
 
     glBindVertexArray(myVAO[0]);
     glDrawArrays(GL_POINTS, 0, m_parser->verts.size());
@@ -22,9 +23,12 @@ void renderer::render()
 }
 void renderer::loadScene()
 {
+    /* short circuit if the model is not fed to the renderer*/
+    if (m_scenePath.empty())
+        return;
     m_parser = new parser2();
     m_parser->read_file(m_scenePath);
-    
+
     // Allocate Vertex Array Objects (VAOs) and Vertex Buffer Objects (VBOs).
     glGenVertexArrays(1, &myVAO[0]);
     glGenBuffers(1, &myVBO[0]);
@@ -45,7 +49,7 @@ void renderer::loadScene()
 
     glBindVertexArray(myVAO[0]);
     glBindBuffer(GL_ARRAY_BUFFER, myVBO[0]);
-    
+
     /* buffer the parsed vertices */
     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * (m_parser->verts.size()), &(m_parser->verts[0]), GL_STATIC_DRAW);
     glVertexAttribPointer(vertPos_loc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)(0));
@@ -62,12 +66,12 @@ void renderer::setup()
     loadScene();
 
     ShaderMgr shdrmgr;
-    if(!m_use_compute_shader)
+    if (!m_use_compute_shader)
     {
         shdrmgr.addVertexShader((m_shaderPath + "\\vertex.vs").c_str());
         shdrmgr.addFragmentShader((m_shaderPath + "\\fragment.fs").c_str());
     }
-    else 
+    else
     {
         shdrmgr.addComputeShader((m_shaderPath + "\\compute.comp").c_str());
     }
@@ -79,6 +83,10 @@ void renderer::setup()
 void renderer::useProgram()
 {
     glUseProgram(shaderProgram);
+}
+void renderer::setFloat(const std::string &name, float &value)
+{
+    glUniform1f(glGetUniformLocation(shaderProgram, name.c_str()), value);
 }
 void renderer::setUniformMat4(const std::string &name, glm::mat4 &matrix)
 {
