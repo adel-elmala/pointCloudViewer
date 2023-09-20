@@ -112,7 +112,7 @@ int main(int argc, char const *argv[])
 
     win.attach_camera(&cam);
     std::string shader_path = "C:\\Users\\a.refaat\\projects\\pointCloudViewer\\pointCloudViewer\\shaders\\compute";
-    std::string model_path = "C:\\Users\\a.refaat\\projects\\pointCloudViewer\\assets\\dragon.ply";
+    std::string model_path = "C:\\Users\\a.refaat\\projects\\pointCloudViewer\\assets\\Villa85M.ply";
 
     /* load shaders and buffer the data to opengl */
 
@@ -120,7 +120,7 @@ int main(int argc, char const *argv[])
 
     compute computeProg(model_path,shader_path);
 
-    renderer screenQuad(std::string(""), shader_path);
+    renderer screenQuad(shader_path);
     screenQuad.setup();
 
  
@@ -134,26 +134,25 @@ int main(int argc, char const *argv[])
 
     computeProg.setup();
     computeProg.useProgram();
-    computeProg.check_for_opengl_errors();
 
     glm::mat4 projection = glm::perspective(float(glm::radians(cam.m_fov)), (float)win.m_win_width / (float)win.m_win_height, 0.1f, 1000.0f);
     glm::mat4 view = cam.m_view;
     glm::mat4 model = glm::mat4(1.0f);
     computeProg.setUniformMat4("model", model);
-    computeProg.check_for_opengl_errors();
-
 
     computeProg.setUniformMat4("view", view);
-    computeProg.check_for_opengl_errors();
 
     computeProg.setUniformMat4("projection", projection);
-    computeProg.check_for_opengl_errors();
 
     /* attatch the gui back to the window so it can dispatch events back to the gui*/
 
     int frameCounter = 0;
     double previousTime = glfwGetTime();
     double accumDelta = 0;
+
+
+    screenQuad.attach_shaderProg_SSB(computeProg.posSSbo_output);
+    screenQuad.attach_shaderProg_num_elms(computeProg.num_elms);
 
     /* rendering loop */
     while (!win.should_close())
@@ -186,7 +185,7 @@ int main(int argc, char const *argv[])
             computeProg.setUniformMat4("projection", projection);
         }
 
-       computeProg.check_for_opengl_errors(); 
+        computeProg.check_for_opengl_errors(); 
 
         // compRender.setFloat("t", currentTime);
         cam.update();
@@ -197,15 +196,9 @@ int main(int argc, char const *argv[])
 
         // render image to quad
         screenQuad.useProgram();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glBindBuffer( GL_ARRAY_BUFFER, computeProg.posSSbo_output );
-        glVertexPointer( 4, GL_FLOAT, 0, (void *)0 );
-        glEnableClientState( GL_VERTEX_ARRAY );
-        glDrawArrays( GL_POINTS, 0, computeProg.num_elms);
-        glDisableClientState( GL_VERTEX_ARRAY );
-        glBindBuffer( GL_ARRAY_BUFFER, 0 );
         /* -------------------- */
-
+        screenQuad.render();
+        
         dearGui.confg();
         dearGui.render();
         
