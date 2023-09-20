@@ -6,6 +6,7 @@
 #include "camera.h"
 #include "gui.h"
 #include "parser2.h"
+#include "compute.h"
 
 void setTexture();
 void renderQuad();
@@ -111,66 +112,42 @@ int main(int argc, char const *argv[])
 
     win.attach_camera(&cam);
     std::string shader_path = "C:\\Users\\a.refaat\\projects\\pointCloudViewer\\pointCloudViewer\\shaders\\compute";
+    std::string model_path = "C:\\Users\\a.refaat\\projects\\pointCloudViewer\\assets\\dragon.ply";
 
     /* load shaders and buffer the data to opengl */
 
     // test the compute shader stuff here
-    renderer compRender(std::string(""), shader_path, true);
-    compRender.setup();
+
+    compute computeProg(model_path,shader_path);
 
     renderer screenQuad(std::string(""), shader_path);
     screenQuad.setup();
 
-    parser2 prs;
-    prs.read_file("C:\\Users\\a.refaat\\projects\\pointCloudViewer\\assets\\Villa85M.ply");
+ 
 
-    /* init the gui manger and attacht other modules it needs to operate*/
+    /* init the gui manger and attach other modules it needs to operate*/
     gui dearGui(&win);
     dearGui.attatch_renderer(&screenQuad);
     dearGui.setup();
-    /* attatch the gui bacj to the window so it can dispatch events back to the gui*/
+    /* attach the gui back to the window so it can dispatch events back to the gui*/
     win.attach_gui(&dearGui);
 
-
-    compRender.useProgram();
-    /* set up the verticies buffer */
-    typedef struct vertex
-    {
-        float x, y, z, w;
-    } vertex_t;
-
-    unsigned int posSSbo,posSSbo_output;
-    unsigned int num_elms = prs.verts.size();
-    unsigned int buffer_size = sizeof(float) * 4 * num_elms;
-
-    glGenBuffers(1, &posSSbo_output);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, posSSbo_output);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, buffer_size, NULL, GL_STATIC_DRAW);
-
-
-    glGenBuffers(1, &posSSbo);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, posSSbo);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, buffer_size, NULL, GL_STATIC_DRAW);
-    GLint bufMask = GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT; // the invalidate makes a big difference when re-writing
-
-    vertex_t *points = (vertex_t *)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, buffer_size, bufMask);
-    for (int i = 0; i < num_elms; i++)
-    {
-        points[i].x = prs.verts[i].x;
-        points[i].y = prs.verts[i].y;
-        points[i].z = prs.verts[i].z;
-        points[i].w = 1;
-    }
-    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, posSSbo);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, posSSbo_output);
+    computeProg.setup();
+    computeProg.useProgram();
+    computeProg.check_for_opengl_errors();
 
     glm::mat4 projection = glm::perspective(float(glm::radians(cam.m_fov)), (float)win.m_win_width / (float)win.m_win_height, 0.1f, 1000.0f);
     glm::mat4 view = cam.m_view;
     glm::mat4 model = glm::mat4(1.0f);
-    compRender.setUniformMat4("model", model);
-    compRender.setUniformMat4("view", view);
-    compRender.setUniformMat4("projection", projection);
+    computeProg.setUniformMat4("model", model);
+    computeProg.check_for_opengl_errors();
+
+
+    computeProg.setUniformMat4("view", view);
+    computeProg.check_for_opengl_errors();
+
+    computeProg.setUniformMat4("projection", projection);
+    computeProg.check_for_opengl_errors();
 
     /* attatch the gui back to the window so it can dispatch events back to the gui*/
 
@@ -198,37 +175,33 @@ int main(int argc, char const *argv[])
         }
         previousTime = currentTime;
         /* -------------------- */
+        computeProg.check_for_opengl_errors();
 
-        compRender.useProgram();
+        computeProg.useProgram();
         /* update the projection matrix when the window is resized */
         if (win.m_win_resized)
         {
             win.m_win_resized = false;
             projection = glm::perspective(float(glm::radians(cam.m_fov)), (float)win.m_win_width / (float)win.m_win_height, 0.1f, 1000.0f);
-            compRender.setUniformMat4("projection", projection);
+            computeProg.setUniformMat4("projection", projection);
         }
 
+       computeProg.check_for_opengl_errors(); 
 
         // compRender.setFloat("t", currentTime);
         cam.update();
         view = cam.m_view;
-        compRender.setUniformMat4("view", view);
+        computeProg.setUniformMat4("view", view);
         
-        
-
-        glDispatchCompute(num_elms / 10, 1, 1);
-
-        // make sure writing to image has finished before read
-        // glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-        glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+        computeProg.dispatch();        
 
         // render image to quad
         screenQuad.useProgram();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glBindBuffer( GL_ARRAY_BUFFER, posSSbo_output );
+        glBindBuffer( GL_ARRAY_BUFFER, computeProg.posSSbo_output );
         glVertexPointer( 4, GL_FLOAT, 0, (void *)0 );
         glEnableClientState( GL_VERTEX_ARRAY );
-        glDrawArrays( GL_POINTS, 0, num_elms);
+        glDrawArrays( GL_POINTS, 0, computeProg.num_elms);
         glDisableClientState( GL_VERTEX_ARRAY );
         glBindBuffer( GL_ARRAY_BUFFER, 0 );
         /* -------------------- */

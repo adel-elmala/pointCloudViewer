@@ -5,3 +5,5 @@ pointCloudViewer/external/
 .vs
 .vscode
 *.ply
+*.swp
+*~
