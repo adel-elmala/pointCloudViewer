@@ -138,7 +138,7 @@ void ShaderMgr::addComputeShader(const char *ComputeShaderPath)
     const char *cShaderCode = computeCode.c_str();
     // 2. compile shaders
     unsigned int compute;
-    // Compute Shader
+    // fragment Shader
     compute = glCreateShader(GL_COMPUTE_SHADER);
     glShaderSource(compute, 1, &cShaderCode, NULL);
     glCompileShader(compute);
