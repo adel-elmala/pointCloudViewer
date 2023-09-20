@@ -122,7 +122,15 @@ int main(int argc, char const *argv[])
     screenQuad.setup();
 
     parser2 prs;
-    prs.read_file("C:\\Users\\a.refaat\\projects\\pointCloudViewer\\assets\\dragon.ply");
+    prs.read_file("C:\\Users\\a.refaat\\projects\\pointCloudViewer\\assets\\Villa85M.ply");
+
+    /* init the gui manger and attacht other modules it needs to operate*/
+    gui dearGui(&win);
+    dearGui.attatch_renderer(&screenQuad);
+    dearGui.setup();
+    /* attatch the gui bacj to the window so it can dispatch events back to the gui*/
+    win.attach_gui(&dearGui);
+
 
     compRender.useProgram();
     /* set up the verticies buffer */
@@ -192,10 +200,22 @@ int main(int argc, char const *argv[])
         /* -------------------- */
 
         compRender.useProgram();
+        /* update the projection matrix when the window is resized */
+        if (win.m_win_resized)
+        {
+            win.m_win_resized = false;
+            projection = glm::perspective(float(glm::radians(cam.m_fov)), (float)win.m_win_width / (float)win.m_win_height, 0.1f, 1000.0f);
+            compRender.setUniformMat4("projection", projection);
+        }
+
+
         // compRender.setFloat("t", currentTime);
         cam.update();
         view = cam.m_view;
         compRender.setUniformMat4("view", view);
+        
+        
+
         glDispatchCompute(num_elms / 10, 1, 1);
 
         // make sure writing to image has finished before read
@@ -213,6 +233,9 @@ int main(int argc, char const *argv[])
         glBindBuffer( GL_ARRAY_BUFFER, 0 );
         /* -------------------- */
 
+        dearGui.confg();
+        dearGui.render();
+        
         glfwSwapBuffers(win.m_win); // Displays what was just rendered (using double buffering).
 
         /* Poll events (key presses, mouse events) */
