@@ -6,6 +6,9 @@
 #include "camera.h"
 #include "gui.h"
 #include "parser2.h"
+
+#include "myParser.h"
+
 #include "compute.h"
 
 void setTexture();
@@ -112,7 +115,7 @@ int main(int argc, char const *argv[])
 
     win.attach_camera(&cam);
     std::string shader_path = "C:\\Users\\a.refaat\\projects\\pointCloudViewer\\pointCloudViewer\\shaders\\compute";
-    std::string model_path = "C:\\Users\\a.refaat\\projects\\pointCloudViewer\\assets\\Villa85M.ply";
+    std::string model_path = "C:\\Users\\a.refaat\\projects\\pointCloudViewer\\assets\\dragon.ply";
 
     /* load shaders and buffer the data to opengl */
 
@@ -278,3 +281,23 @@ void renderQuad()
 }
 
 #endif
+
+
+
+#if 0
+int main(int argc, char const* argv[])
+{
+    
+    std::string model_path = "C:\\Users\\a.refaat\\projects\\pointCloudViewer\\assets\\Villa85M.ply";
+
+    //parser2 p;
+    //p.read_file(model_path);
+    myParser parser(model_path);
+    parser.read_file();
+}
+#endif 
+
+/*db 8a 8b c0 5d ed d5 c1 20 81 d6 c2 7c 31 28 c3 4a ec ce c2 40 33 13 c3 c7 09 28 c3 51 7a cf c2 50 2d 13 c3 0a 07 28 c3 f1 43 cf c2 20 41 13 c3 20 d3 27 c3 f7 d5  ÛŠ.À]íÕÁ .ÖÂ|1(ÃJìÎÂ@3.ÃÇ.(ÃQzÏÂP-.Ã..(ÃñCÏÂ A.Ã Ó'Ã÷Õ
+0x0000024646B850B6  cf c2 f8 42 13 c3 b7 e1 27 c3 5b 02 d0 c2 59 26 13 c3 67 b4 27 c3 c2 57 d0 c2 20 43 13 c3 c8 a8 27 c3 fb 9c cf c2 ba 59 13 c3 55 30 84 c0 6c 78 d7 c1 d1 42 d6 c2  ÏÂøB.Ã·á'Ã[.ĞÂY&.Ãg´'ÃÂWĞÂ C.ÃÈ¨'ÃûœÏÂºY.ÃU0.Àlx×ÁÑBÖÂ
+0x0000024646B850EC  6e 54 28 c3 44 29 ce c2 bf 3d 13 c3 02 5c 28 c3 a6 5b ce c2 03 29 13 c3 3b 01 83 c0 e8 d9 da c1 1f 25 d6 c2 3b 10 28 c3 4e 82 cf c2 79 d9 12 c3 22 0d 28 c3 e1 7a  nT(ÃD)ÎÂ¿=.Ã.\(Ã¦[ÎÂ.).Ã;.ƒÀèÙÚÁ.%ÖÂ;.(ÃN.ÏÂyÙ.Ã".(Ãáz
+0x0000024646B85122  cf c2 ac 8c 12 c3 b7 42 28 c3 f5 db ce c2 df 3f 12 c3 7b 64 28 c3 36 6d ce c2 79 d9 12 c3 39 64 28 c3 8b 6c ce c2 df 3f 12 c3 af 85 28 c3 5d cd cd c2 df 3*/

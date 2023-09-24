@@ -29,6 +29,10 @@ add_library(parser2 "src/parser2.cpp" "include/parser2.h")
 target_link_libraries(parser2 PUBLIC tinyply)
 
 
+# add_library(CplyParser "src/CplyParser.cpp" "include/CplyParser.h" "src/plyParser.cpp" "include/plyParser.h")
+add_library(myPlyParser "src/myParser.cpp" "include/myParser.h")
+
+
 add_library(camera "src/camera.cpp" "include/camera.h")
 target_link_libraries(camera PUBLIC glm::glm)
 
@@ -54,5 +58,5 @@ target_link_libraries(gui PUBLIC imgui::imgui)
 add_executable(${APP_NAME} "main.cpp" )
 
 
-target_link_libraries(${APP_NAME} PUBLIC GLEW::GLEW shaderMgr2 camera renderer compute windowMgr gui parser2)
+target_link_libraries(${APP_NAME} PUBLIC GLEW::GLEW shaderMgr2 camera renderer compute windowMgr gui parser2 myPlyParser)
 

@@ -26,32 +26,33 @@ void compute::loadScene()
     /* short circuit if the model is not fed to the renderer*/
     if (m_scenePath.empty())
         return;
-    m_parser = new parser2();
-    m_parser->read_file(m_scenePath);
+    //m_parser = new parser2();
+    m_parser = new myParser(m_scenePath);
+    m_parser->read_file();
 
     typedef struct vertex
     {
         float x, y, z, w;
     } vertex_t;
 
-    num_elms = m_parser->verts.size();
+    num_elms = m_parser->m_points.size();
     unsigned int buffer_size = sizeof(float) * 4 * num_elms;
-
     glGenBuffers(1, &posSSbo_output);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, posSSbo_output);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, buffer_size, NULL, GL_STATIC_DRAW);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, buffer_size, NULL, GL_DYNAMIC_DRAW);
 
+    /* TODO: make the SSBO size to match the size of the texture image size * the number of bytes per texel */
     glGenBuffers(1, &posSSbo);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, posSSbo);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, buffer_size, NULL, GL_STATIC_DRAW);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, buffer_size, NULL, GL_DYNAMIC_DRAW);
     GLint bufMask = GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT; // the invalidate makes a big difference when re-writing
 
     vertex_t *points = (vertex_t *)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, buffer_size, bufMask);
     for (int i = 0; i < num_elms; i++)
     {
-        points[i].x = m_parser->verts[i].x;
-        points[i].y = m_parser->verts[i].y;
-        points[i].z = m_parser->verts[i].z;
+        points[i].x = m_parser->m_points[i].x;
+        points[i].y = m_parser->m_points[i].y;
+        points[i].z = m_parser->m_points[i].z;
         points[i].w = 1;
     }
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);

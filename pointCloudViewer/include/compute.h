@@ -3,6 +3,7 @@
 
 // #include "parser.h"
 #include "parser2.h"
+#include "myParser.h"
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -12,7 +13,8 @@ class compute
 {
 private:
     /* data */
-    parser2 *m_parser;
+    //parser2* m_parser;
+    myParser *m_parser;
     void loadScene();
 
 public:
