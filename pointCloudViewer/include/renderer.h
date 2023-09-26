@@ -22,8 +22,8 @@ public:
     void setup();
     void useProgram();
     void render();
-    void attach_shaderProg_SSB(unsigned int SSBId);
-    void attach_shaderProg_num_elms(unsigned int num_elms);
+    void attach_shaderProg_SSB(unsigned int SSBId_pos,unsigned int SBBId_col);
+    void attach_shaderProg_num_elms(unsigned int num_elms,unsigned int num_cols);
     void setUniformMat4(const std::string &name, glm::mat4 &matrix);
     void setUniformVec3(const std::string &name, glm::vec3 &vect);
     void setFloat(const std::string &name, float &value);
@@ -35,8 +35,10 @@ public:
     unsigned int shaderProgram;
     const unsigned int vertPos_loc = 0;   // Corresponds to "location = 0" in the verter shader definition
     const unsigned int vertColor_loc = 1; // Corresponds to "location = 1" in the verter shader definition
-    unsigned int m_SSBid;
+    unsigned int m_SSBid_pos;
+    unsigned int m_SSBid_col;
     unsigned int m_num_elms;
+    unsigned int m_num_cols;
     std::string m_shaderPath;
 };
 

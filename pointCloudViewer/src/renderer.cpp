@@ -9,13 +9,15 @@ renderer::renderer(const std::string &shader_path) : m_shaderPath(shader_path)
 renderer::~renderer()
 {
 }
-void renderer::attach_shaderProg_SSB(unsigned int SBBId)
+void renderer::attach_shaderProg_SSB(unsigned int SBBId_pos, unsigned int SBBId_col)
 {
-    m_SSBid = SBBId;
+    m_SSBid_pos = SBBId_pos;
+    m_SSBid_col = SBBId_col;
 }
-void renderer::attach_shaderProg_num_elms(unsigned int num_elms)
+void renderer::attach_shaderProg_num_elms(unsigned int num_elms, unsigned int num_cols)
 {
     m_num_elms = num_elms;
+    m_num_cols = num_cols;
 }
 
 void renderer::render()
@@ -24,13 +26,26 @@ void renderer::render()
 
     useProgram();
     
-    glBindBuffer( GL_ARRAY_BUFFER, m_SSBid);
-    glVertexPointer( 4, GL_FLOAT, 0, (void *)0 );
-    glEnableClientState( GL_VERTEX_ARRAY );
-    glDrawArrays( GL_POINTS, 0, m_num_elms);
-    glDisableClientState( GL_VERTEX_ARRAY );
-    glBindBuffer( GL_ARRAY_BUFFER, 0 );
-    
+    // glBindBuffer(GL_ARRAY_BUFFER, m_SSBid_col);
+    // glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, NULL);
+    // glEnableVertexAttribArray(1);
+    // glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, m_SSBid_pos);
+
+    // pos
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    //color
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 8*sizeof(float), (void*) (4*sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    // glVertexPointer(4, GL_FLOAT, 0, (void *)0);
+    // glEnableClientState(GL_VERTEX_ARRAY);
+    glDrawArrays(GL_POINTS, 0, m_num_elms);
+    // glDisableClientState(GL_VERTEX_ARRAY);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
     check_for_opengl_errors(); // Really a great idea to check for errors -- esp. good for debugging!
 }
 void renderer::loadScene()

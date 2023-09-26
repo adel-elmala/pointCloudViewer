@@ -233,14 +233,14 @@ void myParser::parse_data_binary_mode(std::ifstream& fin)
     unsigned int nVerts_per_mb = buffer_size / size_of_each_attribute;
     buffer_size = nVerts_per_mb * size_of_each_attribute; // to avoid spliting the last vert attrib in the buffer between 2 buffer reads
 
-    unsigned int nBuffers_needed = m_header.vertex_element.num_verts / nVerts_per_mb;
+    int nBuffers_needed = m_header.vertex_element.num_verts / nVerts_per_mb;
     unsigned int remaining = m_header.vertex_element.num_verts - (nBuffers_needed * nVerts_per_mb);
 
     char* buffer = new char[buffer_size];
 
 
     // read the file in binary mode starting from where the header ended
-    while (fin && (total_bytes_to_read > 0))
+    while (fin && (nBuffers_needed >= 0))
     {
 
         if(nBuffers_needed == 0)
@@ -271,8 +271,8 @@ void myParser::extract_vetex_data(char* data,unsigned int nVerts,V vert_type,C c
     /*std::vector<V> points;
     std::vector<C> color;*/
    
-    vertex vert;
-    rgba col;
+    vertex vert = {0};
+    rgba col = {0};
     unsigned int nPos = m_header.vertex_element.pos_property_num;
     unsigned int nColor = m_header.vertex_element.color_property_num;
     size_t vs = sizeof(V);

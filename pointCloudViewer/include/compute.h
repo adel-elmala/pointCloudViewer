@@ -2,7 +2,7 @@
 #define COMPUTE_H
 
 // #include "parser.h"
-#include "parser2.h"
+//#include "parser2.h"
 #include "myParser.h"
 #include <GL/glew.h>
 #include <glm/glm.hpp>
@@ -37,7 +37,9 @@ public:
     glm::mat4 m_view;
 
     unsigned int posSSbo,posSSbo_output;
+    unsigned int colSSbo,colSSbo_output;
     unsigned int num_elms; 
+    unsigned int num_col; 
     std::string m_scenePath;
     std::string m_shaderPath;
 };

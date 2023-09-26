@@ -15,16 +15,32 @@ layout( location = 1 ) uniform mat4 model;
 layout( location = 2 ) uniform mat4 view;
 layout( location = 3 ) uniform mat4 projection;
 
-layout( std430, binding=4 ) buffer Pos
+
+struct vertex
 {
-	vec4 Positions[ ]; // array of structures
+	float x,y,z,w;
+	float r,g,b,a;
 };
-layout( std430, binding=5 ) buffer Pos_output
+layout( std430, binding=4 ) buffer input_data
 {
-	vec4 Positions_output[ ]; // array of structures
+	vertex input[]; // array of structures
+};
+// layout( std430, binding=6 ) buffer Col
+// {
+// 	vec4 Colors[ ]; // array of structures
+// };
+
+layout( std430, binding=5 ) buffer output_data
+{
+	vertex _output[]; // array of structures
+
 };
 
+// layout( std430, binding=7 ) buffer Col_output
+// {
+// 	vec4 Color_output[];
 
+// };
 // ----------------------------------------------------------------------------
 //
 // functions
@@ -34,5 +50,14 @@ layout( std430, binding=5 ) buffer Pos_output
 void main() 
 {
 	uint idx = (gl_GlobalInvocationID.x);
-	Positions_output[idx] = projection * view * model * Positions[idx];
+	vec4 result = projection * view * model * vec4(input[idx].x,input[idx].y,input[idx].z,input[idx].w);
+	_output[idx].x = result.x;
+	_output[idx].y = result.y;
+	_output[idx].z = result.z;
+	_output[idx].w = result.w;
+	vec4 col = vec4(input[idx].r,input[idx].g,input[idx].b,input[idx].a);
+	_output[idx].r = col.r;
+	_output[idx].g = col.g;
+	_output[idx].b = col.b;
+	_output[idx].a = col.a;
 }
