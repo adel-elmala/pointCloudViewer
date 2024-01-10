@@ -114,8 +114,8 @@ int main(int argc, char const *argv[])
     WindowMgr win("Point Cloud Viewer", 800, 800);
 
     win.attach_camera(&cam);
-    std::string shader_path = "C:\\Users\\a.refaat\\projects\\pointCloudViewer\\pointCloudViewer\\shaders\\compute";
-    std::string model_path = "C:\\Users\\a.refaat\\projects\\pointCloudViewer\\assets\\cairo_tower.ply";
+    std::string shader_path = "E:\\projects\\pointCloudViewer\\pointCloudViewer\\shaders\\compute";
+    std::string model_path = "E:\\projects\\pointCloudViewer\\assets\\cloud_sparse.ply";
 
     /* load shaders and buffer the data to opengl */
 

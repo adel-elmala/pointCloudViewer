@@ -7,3 +7,4 @@ pointCloudViewer/external/
 *.ply
 *.swp
 *~
+assets/
